@@ -1,22 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Twitoff App</title>
-</head>
-<body>
+<!-- web_app/templates/books.html -->
 
+{% extends "layout.html" %}
 
-    <h1>My Books Page</h1>
+{% block title %}
+    <title>Books Page</title>
+{% endblock %}
 
-    <p>Here are the books:</p>
-    
-    <ul>
-        <li>Book ABC</li>
-        <li>Book DEF</li>
-        <li>Book XYZ</li>
-    </ul>
+{% block content %}
 
-</body>
-</html>
+    <h2>Welcome to the Books Page</h2>
+
+    <p>{{ message }}</p>
+
+    {% if books %}
+        <ul>
+        {% for book in books %}
+            <li>{{ book["title"] }}</li>
+        {% endfor %}
+        </ul>
+
+    {% else %}
+        <p>Books not found.</p>
+    {% endif %}
+
+{% endblock %}
