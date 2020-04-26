@@ -17,29 +17,34 @@ print(type(auth))
 api = tweepy.API(auth)
 print(type(api))
 
-print("----------")
-print("USER")
-user = api.get_user("_csaul")
-print(type(user))
-print(user.screen_name)
-print(user.id)
-print(user.statuses_count)
+if __name__ == "__main__":
 
-print("----------")
-print("STATUSES")
+    #screen_name = input("Please choose a screen name")
 
-#statuses = api.user_timeline("_csaul", count=35)
+    print("----------")
+    print("USER")
+
+    user = api.get_user("_csaul")
+    print(type(user))
+    print(user.screen_name)
+    print(user.id)
+    print(user.statuses_count)
+
+    print("----------")
+    print("STATUSES")
+
+    #statuses = api.user_timeline("_csaul", count=35)
 
 
-statuses = api.user_timeline("_csaul", tweet_mode="extended", count=35, exclude_replies=True, include_rts=False)
-for status in statuses: 
-    print ("-------")
+    statuses = api.user_timeline("_csaul", tweet_mode="extended", count=35, exclude_replies=True, include_rts=False)
+    for status in statuses: 
+        print ("-------")
+        print(status.full_text)
+
+
+
+    status = statuses[0]
+    print(type(status))
+
+    print(status.id)
     print(status.full_text)
-
-
-
-status = statuses[0]
-print(type(status))
-
-print(status.id)
-print(status.full_text)
