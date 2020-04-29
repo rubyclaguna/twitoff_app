@@ -1,5 +1,3 @@
-# web_app/models.py
-
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
@@ -26,14 +24,14 @@ class Tweet(db.Model):
     full_text = db.Column(db.String(500))
     embedding = db.Column(db.PickleType)
 
+    user = db.relationship("User", backref=db.backref("tweets", lazy=True))
+
+
 def parse_records(database_records):
     """
     A helper method for converting a list of database record objects into a list of dictionaries, so they can be returned as JSON
-
     Param: database_records (a list of db.Model instances)
-
     Example: parse_records(User.query.all())
-
     Returns: a list of dictionaries, each corresponding to a record, like...
         [
             {"id": 1, "title": "Book 1"},
