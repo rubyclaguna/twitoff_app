@@ -1,10 +1,13 @@
 from sklearn.datasets import load_iris
 from sklearn.linear_model import LogisticRegression
 
-from flask import Blueprint, jsonify, request, flash, redirect
+from flask import Blueprint, jsonify, request, flash, redirect, render_template
 
 from web_app.statsmodels import load_model
 
+from web_app.models import User
+
+from web_app.services.basilica_service import conn as basilica_connection
 
 stats_routes = Blueprint("stats_routes", __name__)
 
@@ -25,8 +28,42 @@ def twitoff_predict():
     screen_name_a = request.form["screen_name_a"]
     screen_name_b = request.form["screen_name_b"]
     tweet_text = request.form["tweet_text"]
-
-
     print(screen_name_a, screen_name_b, tweet_text)
+    
 
-    return "OK (TODO)"
+    #train a model
+    
+    tweet_embeddings = []
+    tweet_labels = []
+
+    user_a = User.query.filter(User.screen_name == screen_name_a).one()
+    user_b = User.query.filter(User.screen_name == screen_name_b).one()
+
+    tweets_a = user_a.tweets
+    tweets_b = user_b.tweets
+
+    all_tweets = tweets_a + tweets_b
+
+    for tweet in all_tweets: 
+        # add embeddings and corresponding user name to list above?
+        #breakpoint()    
+        tweet_embeddings.append(tweet.embedding)
+        tweet_labels.append(tweet.user.screen_name)
+
+    print("EMBEDDINGS", len(tweet_embeddings), "LABELS:", len(tweet_labels))
+
+    classifier = LogisticRegression(random_state=0, solver="lbfgs", multi_class="multinomial")
+    classifier.fit(tweet_embeddings, tweet_labels)
+    
+
+    example_tweet_embedding = basilica_connection.embed_sentence(tweet_text, model="twitter")
+    result = classifier.predict([example_tweet_embedding])
+    
+    print("RESULT:", result[0])
+
+    return render_template("prediction_results.html", 
+    screen_name_a = screen_name_a, 
+    screen_name_b = screen_name_b, 
+    tweet_text = tweet_text, 
+    screen_name_most_likely=result[0]
+   )
